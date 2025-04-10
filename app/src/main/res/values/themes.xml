@@ -1,0 +1,22 @@
+<resources>
+    <!-- 基础主题（保留原有配置） -->
+    <style name="Base.Theme.RandomRouletteWheel" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- 原有自定义项 -->
+    </style>
+    <!-- 主应用主题改为继承自定义样式 -->
+    <style name="Theme.RandomRouletteWheel" parent="Theme.MyApp" /> <!-- 关键修改 -->
+
+    <!-- MaterialButton 自定义样式 -->
+    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="materialButtonStyle">@style/MyStaticButtonStyle</item>
+    </style>
+
+    <style name="MyStaticButtonStyle" parent="Widget.Material3.Button">
+        <item name="shapeAppearance">@style/MyButtonShape</item>
+    </style>
+
+    <style name="MyButtonShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
+    </style>
+</resources>
