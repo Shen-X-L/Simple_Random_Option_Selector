@@ -24,9 +24,8 @@ import java.util.Map;
 public class LoadActivity extends AppCompatActivity {
     private Map<String, ProbabilityArray> probabilityData;
     private RecyclerView recyclerView;
-    private LoadAdapter adapter;
 
-    @Override // 添加了@Override注解
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load);
