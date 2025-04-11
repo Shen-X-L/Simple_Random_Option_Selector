@@ -3,4 +3,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="button_bg">#6200EE</color>
+    <color name="delete_button">#FFFF8080</color>
 </resources>

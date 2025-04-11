@@ -11,10 +11,9 @@ import java.util.Map;
 
 public class SaveAndLoadData {
     // 存储
-    public static void saveProbabilityArray(Context context, String listKey, ProbabilityArray list) {
+    public static void saveProbabilityArray(Context context, String listKey, ProbabilityArray array) {
         SharedPreferences prefs = context.getSharedPreferences("probability_data", Context.MODE_PRIVATE);
-        String json = list.toJson();
-        prefs.edit().putString(listKey, json).apply(); // 使用不同key区分列表
+        prefs.edit().putString(listKey, array.toJson()).apply(); // 使用不同key区分列表
     }
 
     // 获取所有存储的ProbabilityArray
@@ -32,5 +31,9 @@ public class SaveAndLoadData {
             }
         }
         return result;
+    }
+
+    public static void deleteProbabilityArray(Context context, String str) {
+
     }
 }

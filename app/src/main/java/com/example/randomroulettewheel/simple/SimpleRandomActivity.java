@@ -25,7 +25,9 @@ public class SimpleRandomActivity extends AppCompatActivity {
         MaterialButton backButton = findViewById(R.id.back_button);
 
         // 返回按钮
-        backButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> {
+            finish();
+        });
 
         // 接收传递的概率数组
         probabilityArray = getIntent().getParcelableExtra("probability_array");

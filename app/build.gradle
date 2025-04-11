@@ -30,6 +30,7 @@ android {
 
 dependencies {
     implementation 'com.google.android.material:material:1.9.0' // 确保所有模块版本一致
+    implementation libs.flexbox
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity

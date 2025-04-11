@@ -21,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import androidx.core.content.ContextCompat;
+
 import com.example.randomroulettewheel.model.ProbabilityArray;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class DynamicContainerManager {
     //上下文
     private final LinearLayout parentContainer;
     //父容器句柄
-    private final ProbabilityArray dataArray;
+    private ProbabilityArray dataArray;
     //概率对象数组
     private final List<LinearLayout> containerViews = new ArrayList<>();
     //监听对象数组
@@ -50,7 +52,7 @@ public class DynamicContainerManager {
         this.activity = activity;
         this.context = activity;
         this.parentContainer = parentContainer;
-        this.dataArray=dataArray;
+        this.dataArray = dataArray;
         parentContainer.setOrientation(LinearLayout.VERTICAL);
 
         // 注册数据变化监听器
@@ -60,6 +62,7 @@ public class DynamicContainerManager {
                 updateAllDisplays(); // 数据变化时更新所有UI
             }
         });
+
     }
     //更新UI时暂停
     private final AtomicBoolean isUpdatingUI = new AtomicBoolean(false);
@@ -389,6 +392,8 @@ public class DynamicContainerManager {
         buttonParams.weight = 0;
         deleteButton.setLayoutParams(buttonParams);
         deleteButton.setImageResource(android.R.drawable.ic_menu_delete);
+        //红色背景
+        deleteButton.setBackgroundColor(ContextCompat.getColor(context, R.color.delete_button));
         deleteButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         //绑定删除按钮事件
         final LinearLayout finalOuterLayout = outerLayout;
@@ -417,7 +422,54 @@ public class DynamicContainerManager {
 
         return outerLayout;
     }
-    public ProbabilityArray getProbabilityArray() {
+    public ProbabilityArray getDataArray() {
         return dataArray; // 直接返回内部维护的概率数组
+    }
+    public void clearAll() {
+        // 清空数据数组
+        dataArray = null;
+        // 在主线程执行UI更新
+        activity.runOnUiThread(() -> {
+            // 遍历父容器，只删除动态生成的容器（跳过其他视图如按钮）
+            for (int i = parentContainer.getChildCount() - 1; i >= 0; i--) {
+                View child = parentContainer.getChildAt(i);
+                // 关键判断逻辑：通过布局类型和背景色标识动态容器
+                if (child instanceof LinearLayout) {
+                    LinearLayout layout = (LinearLayout) child;
+                    if (layout.getChildCount() >= 2 && layout.getBackground() != null) {
+                        parentContainer.removeViewAt(i);
+                    }
+                }
+            }
+
+            // 清空所有控件引用列表
+            containerViews.clear();
+            probabilityInputs.clear();
+            weightInputs.clear();
+            seekBars.clear();
+        });
+    }
+    public void changeDataArray(View addButton,ProbabilityArray array){
+        //清空数组与视图
+        clearAll();
+        //重赋值
+        dataArray = array;
+
+        // 注册数据变化监听器
+        dataArray.addDataChangeListener(new ProbabilityArray.DataChangeListener() {
+            @Override
+            public void onDataChanged() {
+                updateAllDisplays(); // 数据变化时更新所有UI
+            }
+        });
+
+        //重新生成控件
+        for(ProbabilityArray.Probability temp: dataArray.array){
+            LinearLayout container = createContainerView(dataArray,temp);
+
+            // 获取 add_button 在父布局中的位置索引
+            int index = parentContainer.indexOfChild(addButton);
+            parentContainer.addView(container,index);
+        }
     }
 }
