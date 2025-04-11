@@ -34,9 +34,12 @@ public class MainActivity extends AppCompatActivity {
         new ActivityResultContracts.StartActivityForResult(),
         result -> {
             if (result.getResultCode() == RESULT_OK) {
-                ProbabilityArray array = result.getData().getParcelableExtra("probability_array");
+                dataArray = null;
+                if (result.getData() != null) {
+                    dataArray = result.getData().getParcelableExtra("probability_array");
+                }
                 // 处理返回的数据
-                manager.changeDataArray(addButton,array);
+                manager.changeDataArray(addButton,dataArray);
             }
         }
     );
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             //创建一个显式 Intent 连接页面并跳转
             Intent intent = new Intent(MainActivity.this, SimpleRandomActivity.class);
             //向 Intent 中添加附加数据,需实现 Parcelable 或 Serializable 接口
-            intent.putExtra("probability_array", dataArray);
+            intent.putExtra("probability_array", this.dataArray);
             //执行 Activity 跳转
             startActivity(intent);
         });

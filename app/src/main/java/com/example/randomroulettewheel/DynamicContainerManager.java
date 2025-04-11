@@ -126,7 +126,7 @@ public class DynamicContainerManager {
         outerLayout.setLayoutParams(outerParams);
         outerLayout.setOrientation(LinearLayout.VERTICAL);
         outerLayout.setGravity(Gravity.CENTER);
-        outerLayout.setBackgroundColor(Color.parseColor("#9afc86"));
+        outerLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.option_layout));
 
         // 创建第一排水平布局
         LinearLayout row1 = new LinearLayout(context);
@@ -147,6 +147,9 @@ public class DynamicContainerManager {
         );
         textInput.setLayoutParams(textParams);
         textInput.setHint("选项名字输入");
+        if(!object.getOptionName().isEmpty()){
+            textInput.setText(object.getOptionName());
+        };
         textInput.setInputType(InputType.TYPE_CLASS_TEXT);
         //监听输入
         textInput.addTextChangedListener(new TextWatcher() {
@@ -306,7 +309,7 @@ public class DynamicContainerManager {
 
         // 设置 CheckBox 的样式（可选）
         checkBox.setButtonTintList(ColorStateList.valueOf(Color.BLUE)); // 设置勾选颜色
-        checkBox.setTextColor(Color.BLACK); // 设置文字颜色
+        checkBox.setTextColor(ContextCompat.getColor(context, R.color.text_colors));
 
         // 绑定锁定/解锁事件
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {

@@ -23,7 +23,7 @@
                 android:id="@+id/add_button"
                 android:layout_width="match_parent"
                 android:layout_height="53dp"
-                android:background="#9afc86"
+                android:background="@color/option_layout"
                 android:layout_margin="8dp"
                 app:srcCompat="@android:drawable/ic_menu_add" />
 
@@ -35,7 +35,7 @@
         android:layout_width="80dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="#9afc86"
+        android:background="@color/option_layout"
         android:orientation="vertical">
 
 
