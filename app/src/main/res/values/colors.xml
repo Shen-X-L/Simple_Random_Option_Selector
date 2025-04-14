@@ -6,4 +6,5 @@
     <color name="delete_button">#FFFF6060</color>
     <color name="option_layout">#FF9AFC86</color>
     <color name="text_colors">#FF000000</color>
+    <color name="check_box_colors">#00BCD4</color>
 </resources>

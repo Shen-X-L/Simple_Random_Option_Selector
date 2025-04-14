@@ -33,7 +33,10 @@ public class SaveAndLoadData {
         return result;
     }
 
-    public static void deleteProbabilityArray(Context context, String str) {
-
+    public static void deleteProbabilityArray(Context context, String listKey) {
+        // 获取 SharedPreferences 实例，使用与其他方法相同的文件名
+        SharedPreferences prefs = context.getSharedPreferences("probability_data", Context.MODE_PRIVATE);
+        // 通过 Editor 删除指定键的条目
+        prefs.edit().remove(listKey).apply();
     }
 }

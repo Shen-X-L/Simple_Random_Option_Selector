@@ -4,7 +4,6 @@ package com.example.randomroulettewheel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -308,7 +307,7 @@ public class DynamicContainerManager {
         checkBox.setText("固定");
 
         // 设置 CheckBox 的样式（可选）
-        checkBox.setButtonTintList(ColorStateList.valueOf(Color.BLUE)); // 设置勾选颜色
+        checkBox.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.check_box_colors))); // 设置勾选颜色
         checkBox.setTextColor(ContextCompat.getColor(context, R.color.text_colors));
 
         // 绑定锁定/解锁事件

@@ -2,8 +2,9 @@
 <resources>
     <color name="black">#000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="button_bg">#3C0090</color>
+    <color name="button_bg">#3F0080</color>
     <color name="delete_button">#472020</color>
     <color name="option_layout">#282828</color>
     <color name="text_colors">#FFFFFFFF</color>
+    <color name="check_box_colors">#FF5722</color>
 </resources>
