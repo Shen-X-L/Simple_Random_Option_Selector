@@ -46,6 +46,13 @@
             android:paddingHorizontal="8dp"
             android:text="普通随机" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/wheel_random_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:text="轮盘随机" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"

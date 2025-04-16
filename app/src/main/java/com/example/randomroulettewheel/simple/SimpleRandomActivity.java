@@ -17,9 +17,10 @@ public class SimpleRandomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        // 初始化视图
         setContentView(R.layout.activity_simple_random);
 
-        // 初始化视图
+        // 初始化控件
         resultText = findViewById(R.id.result_text);
         MaterialButton drawButton = findViewById(R.id.draw_button);
         MaterialButton backButton = findViewById(R.id.back_button);

@@ -19,6 +19,7 @@ import com.example.randomroulettewheel.easycontrols.DialogUtils;
 import com.example.randomroulettewheel.model.ProbabilityArray;
 import com.example.randomroulettewheel.persistence.LoadActivity;
 import com.example.randomroulettewheel.simple.SimpleRandomActivity;
+import com.example.randomroulettewheel.wheel.WheelActivity;
 import com.google.android.material.button.MaterialButton;
 
 //MainActivity 是一个 Android 应用程序的主活动（Activity），
@@ -76,6 +77,19 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(sidebar);
             //创建一个显式 Intent 连接页面并跳转
             Intent intent = new Intent(MainActivity.this, SimpleRandomActivity.class);
+            //向 Intent 中添加附加数据,需实现 Parcelable 或 Serializable 接口
+            intent.putExtra("probability_array", this.dataArray);
+            //执行 Activity 跳转
+            startActivity(intent);
+        });
+
+        //轮盘抽奖按钮
+        MaterialButton wheelRandomButton = sidebar.findViewById(R.id.wheel_random_button);
+        wheelRandomButton.setOnClickListener(v -> {
+            // 关闭侧边栏
+            drawerLayout.closeDrawer(sidebar);
+            //创建一个显式 Intent 连接页面并跳转
+            Intent intent = new Intent(MainActivity.this, WheelActivity.class);
             //向 Intent 中添加附加数据,需实现 Parcelable 或 Serializable 接口
             intent.putExtra("probability_array", this.dataArray);
             //执行 Activity 跳转
