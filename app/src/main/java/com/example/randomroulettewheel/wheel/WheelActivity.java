@@ -10,13 +10,15 @@ import com.example.randomroulettewheel.R;
 import com.example.randomroulettewheel.model.ProbabilityArray;
 import com.example.randomroulettewheel.model.Wheel;
 import com.example.randomroulettewheel.views.WheelView;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.Random;
 
-public class WheelActivity extends AppCompatActivity {
+public class WheelActivity extends AppCompatActivity implements Wheel.WheelStopListener,Wheel.WheelAngleVelocityListener {
     private final Random random = new Random();
     private ProbabilityArray probabilityArray;
     private TextView resultText;
+    private TextView angleVelocityText;
     private Wheel wheel;
 
     protected void onCreate(Bundle savedInstanceState){
@@ -26,8 +28,10 @@ public class WheelActivity extends AppCompatActivity {
 
         // 初始化控件
         resultText = findViewById(R.id.result_text);
+        angleVelocityText = findViewById(R.id.angle_velocity_text);
         WheelView wheelView = findViewById(R.id.wheel);
         Button rotateButton = findViewById(R.id.btn_rotate);
+        MaterialButton backButton = findViewById(R.id.back_button);
 
         probabilityArray = getIntent().getParcelableExtra("probability_array");
         if (probabilityArray == null || probabilityArray.size() == 0) {
@@ -39,19 +43,41 @@ public class WheelActivity extends AppCompatActivity {
         wheel = new Wheel(wheelView,probabilityArray);
         // 初始化触摸监听
         wheel.setupTouchListener();
+        wheel.setWheelStopListener(this); // 设置回调监听器
+        wheel.setWheelAngleVelocityListener(this);
+        backButton.setOnClickListener(v ->{
+            finish();
+        });
 
         // 旋转按钮点击事件
         rotateButton.setOnClickListener(v -> {
             // 随机初始速度 (500-1000度/秒)
-            double initialVelocity = 500 + Math.random() * 500;
+            double initialVelocity = 200 + Math.random() * 200;
             wheel.rotateWheel(initialVelocity);
         });
+
     }
+    // 实现回调方法
+    @Override
+    public void onWheelStopped(String selectedOption) {
+        runOnUiThread(() -> {
+            resultText.setText("选中: " + selectedOption);
+        });
+    }
+    @Override
+    public void getWheelAngleVelocity(double angleVelocity){
+        runOnUiThread(() -> {
+            //angleVelocityText.setText("速度为: " + angleVelocity);
+            angleVelocityText.setText("");
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (wheel != null) {
             wheel.stop();
+            wheel.setWheelStopListener(null); // 避免内存泄漏
         }
     }
 

@@ -15,6 +15,13 @@
             android:textSize="18sp"
             android:text="等待抽奖..."
             android:gravity="center"/>
+        <TextView
+            android:id="@+id/angle_velocity_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text=""
+            android:gravity="center"/>
         <com.example.randomroulettewheel.views.WheelView
             android:id="@+id/wheel"
             android:layout_width="300dp"
@@ -24,5 +31,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="开始旋转"/>
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="返回"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

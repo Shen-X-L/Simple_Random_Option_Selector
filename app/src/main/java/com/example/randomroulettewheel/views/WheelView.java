@@ -64,7 +64,7 @@ public class WheelView extends View {
         radius = Math.min(w, h) / 2f * 0.9f;
         textPaint.setTextSize(radius / 10f);
     }
-    //
+    //设置触摸回调接口
     public void setWheelTouchListener(OnTouchListener listener) {
         this.touchListener = listener;
         setOnTouchListener(new View.OnTouchListener() {
@@ -89,11 +89,8 @@ public class WheelView extends View {
                             long deltaTime = currentTime - lastTouchTime;
                             // 限制60fps
                             if (deltaTime < 16) return true;
-                            // 避免除零
-                            if (deltaTime > 0) {
-                                if (touchListener != null) {
-                                    touchListener.onTouchMove(lastTouchPoint, currentPoint, deltaTime / 1000.0);
-                                }
+                            if (touchListener != null) {
+                                touchListener.onTouchMove(lastTouchPoint, currentPoint, deltaTime / 1000.0);
                             }
                         }
                         // 更新记录

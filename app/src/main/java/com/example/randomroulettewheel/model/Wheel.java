@@ -18,7 +18,8 @@ public class Wheel {
     public double angle = 0;//角度
     public int[] color = {Color.RED,Color.YELLOW,Color.GREEN,Color.CYAN,Color.BLUE,Color.MAGENTA};//色彩值
     private boolean isSpinning = false;
-
+    private WheelStopListener wheelStopListener;//停止时选项回调接口
+    private WheelAngleVelocityListener wheelAngleVelocityListener;//速度回调接口
     //初始化
     public Wheel(WheelView wheelView, ProbabilityArray array) {
         //设置轮盘视图
@@ -44,8 +45,12 @@ public class Wheel {
     //初始化
     private void initWheel() {
         for(int i = 0;i < array.size();++i){
-            //轮盘选项赋值
-            wheelView.addSector(color[i % 6],(float)array.getProbability(i) * 360,array.getOptionName(i));
+            if(i == array.size() - 1 && array.size() != 1 && array.size() % 6 == 1){
+                //轮盘选项赋值
+                wheelView.addSector(color[1],(float)array.getProbability(i) * 360,array.getOptionName(i));
+            }else{
+                wheelView.addSector(color[i % 6],(float)array.getProbability(i) * 360,array.getOptionName(i));
+            }
         }
     }
     //赋值速度启动
@@ -68,17 +73,41 @@ public class Wheel {
             handler.post(updateRunnable);// 开始动画循环
         }
     }
+    //摩擦力的加速度
+    private double calculateFrictionAcceleration() {
+        //return -Math.signum(angleVelocity) * 0.01;
+        return -angleVelocity * 0.01;
+    }
+    //计算触摸带来的加速度
+    private double calculateTouchAcceleration(Vector2D previousPoint,Vector2D currentPoint,double deltaTime){
+        Vector2D center = new Vector2D(wheelView.getWidth() / 2f, wheelView.getHeight() / 2f);
+        Vector2D v1 = previousPoint.subtract(center).normalize();//指向中心的向量
+        Vector2D v2 = currentPoint.subtract(previousPoint).divide(deltaTime);//速度向量
+        double userAngleVelocity = v1.cross(v2);//顺时针为正
+        //方向相反
+        if(userAngleVelocity * angleVelocity < 0) {
+            if (Math.abs(angleVelocity) > 500) return -Math.signum(angleVelocity) * 0.5;
+            else return -Math.signum(angleVelocity) * 0.25;
+        }else if(Math.abs(userAngleVelocity) < Math.abs(angleVelocity)) return -Math.signum(angleVelocity) * 0.05;
+        else return Math.signum(userAngleVelocity) * 0.5;
+    }
     //更新数据
     private void update() {
         // 应用摩擦力
-        angleVelocity *= FRICTION;
+        applyAcceleration(calculateFrictionAcceleration());
         // 如果速度很小，停止旋转
+        wheelAngleVelocityListener.getWheelAngleVelocity(angleVelocity);
         if (Math.abs(angleVelocity) < 0.1) {
             angleVelocity = 0;
-            isSpinning = false;
-            // 这里可以添加选中结果的逻辑
+            stop();
+            // 计算选中的选项
+            if (wheelStopListener != null) {
+                String selectedOption = calculateSelectedOption();
+                wheelStopListener.onWheelStopped(selectedOption);
+            }
             return;
         }
+        wheelStopListener.onWheelStopped("正在旋转");
         // 更新角度
         angle += angleVelocity;
         angle %= 360; // 保持角度在0-360范围内
@@ -90,31 +119,60 @@ public class Wheel {
         isSpinning = false;
         handler.removeCallbacks(updateRunnable);// 停止动画循环
     }
+    //轮盘停止返回选项回调接口
+    public interface WheelStopListener {
+        void onWheelStopped(String selectedOption);
+    }
+    //设置轮盘停止返回选项回调接口
+    public void setWheelStopListener(WheelStopListener listener) {
+        this.wheelStopListener = listener;
+    }
+    //返回轮盘速度回调接口
+    public interface  WheelAngleVelocityListener{
+        void getWheelAngleVelocity(double angleVelocity);
+    }
+    //设置轮盘停止返回选项回调接口
+    public void setWheelAngleVelocityListener(WheelAngleVelocityListener listener) {
+        this.wheelAngleVelocityListener = listener;
+    }
+    //计算当前选中的选项
+    private String calculateSelectedOption() {
+        // 将角度转换到0-360范围
+        double normalizedAngle = (360 - (angle + 90) % 360) % 360;
+        // 区间下界
+        float cumulativeAngle = 0;
 
+        for (int i = 0; i < array.size(); i++) {
+            // 区间长度
+            float sectorAngle = (float) array.getProbability(i) * 360;
+            if (normalizedAngle >= cumulativeAngle && normalizedAngle < cumulativeAngle + sectorAngle) {
+                return array.getOptionName(i);
+            }
+            cumulativeAngle += sectorAngle;
+        }
+        return "未知选项";
+    }
+    //定义触摸回调接口
     public void setupTouchListener() {
         wheelView.setWheelTouchListener(new WheelView.OnTouchListener() {
             @Override
             public void onTouchStart() {
                 // 触摸开始时可以停止自动减速
                 isSpinning = true; // 保持旋转状态
+                handler.post(updateRunnable);// 开始动画循环
             }
             @Override
             public void onTouchMove(Vector2D previousPoint, Vector2D currentPoint, double deltaTime) {
-                // 计算用户手势产生的角速度
-                Vector2D center = new Vector2D(wheelView.getWidth() / 2f, wheelView.getHeight() / 2f);
-                Vector2D v1 = previousPoint.subtract(center).normalize();
-                Vector2D v2 = currentPoint.subtract(previousPoint).divide(deltaTime);
-                double userAngleVelocity = v1.cross(v2);
-
-                // 应用加速度 (灵敏度可以调整)
-                double acceleration = userAngleVelocity * 0.1;
-                applyAcceleration(acceleration);
+                // 计算用户手势产生的角速度 并应用
+                applyAcceleration(calculateTouchAcceleration(
+                        previousPoint,currentPoint,deltaTime));
             }
 
             @Override
             public void onTouchEnd() {
                 // 触摸结束时恢复自动减速
                 isSpinning = true;
+                handler.post(updateRunnable);// 开始动画循环
             }
         });
     }
