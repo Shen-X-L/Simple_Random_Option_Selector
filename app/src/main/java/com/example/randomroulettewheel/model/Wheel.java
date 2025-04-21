@@ -88,10 +88,10 @@ public class Wheel {
         double userAngleVelocity = userVelocity / v1.magnitude();
         //方向相反
         if(userAngleVelocity * angleVelocity < 0) {
-            if (Math.abs(angleVelocity) > 500) return -Math.signum(angleVelocity) * 0.2;
-            else return -Math.signum(angleVelocity) * 0.1;
-        }else if(Math.abs(userAngleVelocity) < Math.abs(angleVelocity)) return -Math.signum(angleVelocity) * 0.1;
-        else return Math.signum(userAngleVelocity) * 0.2;
+            if (Math.abs(angleVelocity) > 500) return -Math.signum(angleVelocity) * 1;
+            else return -Math.signum(angleVelocity) * 0.5;
+        }else if(Math.abs(userAngleVelocity) < Math.abs(angleVelocity)) return -Math.signum(angleVelocity) * 0.25;
+        else return Math.signum(userAngleVelocity) * 0.5;
     }
     //更新数据
     private void update() {
