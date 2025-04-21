@@ -45,11 +45,11 @@ public class Wheel {
     //初始化
     private void initWheel() {
         for(int i = 0;i < array.size();++i){
-            if(i == array.size() - 1 && array.size() != 1 && array.size() % 6 == 1){
+            if(i == array.size() - 1 && array.size() != 1 && array.size() % color.length == 1){
                 //轮盘选项赋值
                 wheelView.addSector(color[1],(float)array.getProbability(i) * 360,array.getOptionName(i));
             }else{
-                wheelView.addSector(color[i % 6],(float)array.getProbability(i) * 360,array.getOptionName(i));
+                wheelView.addSector(color[i % color.length],(float)array.getProbability(i) * 360,array.getOptionName(i));
             }
         }
     }
@@ -76,20 +76,22 @@ public class Wheel {
     //摩擦力的加速度
     private double calculateFrictionAcceleration() {
         //return -Math.signum(angleVelocity) * 0.01;
-        return -angleVelocity * 0.01;
+        if(Math.abs(angleVelocity) > 100) return -angleVelocity * 0.05;
+        else return -angleVelocity * 0.005;
     }
     //计算触摸带来的加速度
     private double calculateTouchAcceleration(Vector2D previousPoint,Vector2D currentPoint,double deltaTime){
         Vector2D center = new Vector2D(wheelView.getWidth() / 2f, wheelView.getHeight() / 2f);
-        Vector2D v1 = previousPoint.subtract(center).normalize();//指向中心的向量
+        Vector2D v1 = previousPoint.subtract(center);//指向中心的向量
         Vector2D v2 = currentPoint.subtract(previousPoint).divide(deltaTime);//速度向量
-        double userAngleVelocity = v1.cross(v2);//顺时针为正
+        double userVelocity = v1.normalize().cross(v2);//切线速度 顺时针为正
+        double userAngleVelocity = userVelocity / v1.magnitude();
         //方向相反
         if(userAngleVelocity * angleVelocity < 0) {
-            if (Math.abs(angleVelocity) > 500) return -Math.signum(angleVelocity) * 0.5;
-            else return -Math.signum(angleVelocity) * 0.25;
-        }else if(Math.abs(userAngleVelocity) < Math.abs(angleVelocity)) return -Math.signum(angleVelocity) * 0.05;
-        else return Math.signum(userAngleVelocity) * 0.5;
+            if (Math.abs(angleVelocity) > 500) return -Math.signum(angleVelocity) * 0.2;
+            else return -Math.signum(angleVelocity) * 0.1;
+        }else if(Math.abs(userAngleVelocity) < Math.abs(angleVelocity)) return -Math.signum(angleVelocity) * 0.1;
+        else return Math.signum(userAngleVelocity) * 0.2;
     }
     //更新数据
     private void update() {

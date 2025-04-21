@@ -33,6 +33,11 @@ public class WheelActivity extends AppCompatActivity implements Wheel.WheelStopL
         Button rotateButton = findViewById(R.id.btn_rotate);
         MaterialButton backButton = findViewById(R.id.back_button);
 
+        backButton.setOnClickListener(v ->{
+            finish();
+        });
+
+
         probabilityArray = getIntent().getParcelableExtra("probability_array");
         if (probabilityArray == null || probabilityArray.size() == 0) {
             resultText.setText("错误：无有效数据");
@@ -45,9 +50,6 @@ public class WheelActivity extends AppCompatActivity implements Wheel.WheelStopL
         wheel.setupTouchListener();
         wheel.setWheelStopListener(this); // 设置回调监听器
         wheel.setWheelAngleVelocityListener(this);
-        backButton.setOnClickListener(v ->{
-            finish();
-        });
 
         // 旋转按钮点击事件
         rotateButton.setOnClickListener(v -> {
