@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -18,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WheelView extends View {
+    private final Paint pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG); // 指针画笔
+    private final float pointerWidth = 10f; // 指针宽度
+    private final float pointerLength = 40f; // 指针长度
     private final List<Sector> sectors = new ArrayList<>();//扇形信息List
     private float angle = 0f;//角度
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);//创建画笔 参数启用抗锯齿，使绘制边缘更平滑。
@@ -45,6 +49,8 @@ public class WheelView extends View {
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(40);
         textPaint.setTextAlign(Paint.Align.CENTER);
+        // 初始化指针画笔
+        pointerPaint.setStyle(Paint.Style.FILL);
     }
     //添加扇形
     public void addSector(int color, float sweepAngle,String optionName) {
@@ -121,6 +127,8 @@ public class WheelView extends View {
     //开始绘制
     @Override
     protected void onDraw(Canvas canvas) {
+        //保存视图
+        canvas.save();
         //角度
         float startAngle = angle;
         //遍历绘制
@@ -141,5 +149,33 @@ public class WheelView extends View {
 
             startAngle += sector.sweepAngle;
         }
+        //绘制指针
+        drawPointer(canvas);
+        // 恢复画布状态
+        canvas.restore();
+    }
+    private void drawPointer(Canvas canvas) {
+        // 确保指针可见的配置
+        pointerPaint.setColor(Color.RED); // 改为醒目的颜色
+        pointerPaint.setStyle(Paint.Style.FILL);
+
+        // 指针起点（圆顶部中点）
+        float startX = center.x;
+        float startY = center.y - radius;
+
+        // 指针终点（向上延伸）
+        float endX = center.x;
+        float endY = startY - pointerLength;
+
+        // 绘制指针线段
+        canvas.drawLine(startX, startY, endX, endY, pointerPaint);
+
+        // 绘制三角形箭头
+        Path path = new Path();
+        path.moveTo(endX - pointerWidth / 2, endY); // 左顶点
+        path.lineTo(endX + pointerWidth / 2, endY); // 右顶点
+        path.lineTo(endX, endY - pointerWidth);     // 上顶点
+        path.close();
+        canvas.drawPath(path, pointerPaint);
     }
 }
